@@ -1,25 +1,27 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 
 public class Pickup : MonoBehaviour, IInteractable
 {
-    public bool pickedMeUp = false;
+    public bool pickedMeUp;
 
     public AudioSource pickUpSound;
+    
+    public void Interact()
+    {
+        pickedMeUp = true;
+        StartCoroutine(PlayPickUpSoundAndDisableObjectCoroutine());
+    }
 
-    private IEnumerator PickUpObject()
+    private IEnumerator PlayPickUpSoundAndDisableObjectCoroutine()
     {
         pickUpSound.Play();
-        Debug.Log(gameObject.name + " picked up.");
+        
+        print(gameObject.name + " picked up.");
+        
         yield return new WaitForSeconds(pickUpSound.time);
         gameObject.SetActive(false);
     }
 
-    public void Interact()
-    {
-        pickedMeUp = true;
-        StartCoroutine(PickUpObject());
-    }
+   
 }

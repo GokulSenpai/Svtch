@@ -1,56 +1,68 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Events;
+﻿using UnityEngine;
 
 public class RaycastInteract : MonoBehaviour
 {
     public Animator crossHairImage;
-        
     [SerializeField] private int rayLength = 5;
-   
+
+    private IInteractable _interactable;
+    
     private static readonly int Interacting = Animator.StringToHash("Interacting");
-    private RaycastHit hit;
-
-    private IInteractable interactable;
-
+    
+    private RaycastHit _hit;
+    private Transform _rayTransform;
+    private Vector3 _fwd;
+    private bool _rayCastHit;
+    
+    private void Awake()
+    {
+        _rayTransform = transform;
+    }
 
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
+        SetCursorState();
     }
 
     private void Update()
     {
-        Raycast();
+        RaycastAndInteract();
+    }
+    
+    private static void SetCursorState()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
-    private void Raycast()
+    private void RaycastAndInteract()
     {
-        Transform rayTransform;
-        Vector3 fwd = (rayTransform = transform).TransformDirection(Vector3.forward);
+        _fwd = _rayTransform.TransformDirection(Vector3.forward);
 
-        bool rayCastHit = Physics.Raycast(rayTransform.position, fwd, out hit, rayLength);
-        Debug.DrawRay(transform.position, fwd * rayLength, Color.red);
+        _rayCastHit = Physics.Raycast(_rayTransform.position, _fwd, out _hit, rayLength);
+        
+        Debug.DrawRay(transform.position, _fwd * rayLength, Color.red);
 
-        if (rayCastHit)
+        if (_rayCastHit)
         {
-            interactable = hit.collider.gameObject.GetComponent<IInteractable>();
-            if (interactable != null)
-            {
-                crossHairImage.SetBool(Interacting, true);
-                    
-                Debug.Log("Interacting with Object");
-                    
-                if (Input.GetMouseButtonDown(0))
-                {
-                    interactable.Interact();
-                }
-            }
+            _interactable = _hit.collider.gameObject.GetComponent<IInteractable>();
+
+            if (_interactable == null) return;
+            InteractingWithHitObject();
         }
         else
         { 
             crossHairImage.SetBool(Interacting, false);
+        }
+    }
+
+    private void InteractingWithHitObject()
+    {
+        crossHairImage.SetBool(Interacting, true);
+        
+        if (Input.GetMouseButtonDown(0))
+        {
+            _interactable.Interact();
         }
     }
 }

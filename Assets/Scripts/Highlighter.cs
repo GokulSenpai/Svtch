@@ -1,26 +1,23 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Highlighter : MonoBehaviour
 {
-    private Outline outlineRef;
-    private void Start()
+    private Outline _outlineRef;
+    private void Awake()
     {
-        outlineRef = gameObject.GetComponent<Outline>();
+        _outlineRef = gameObject.GetComponent<Outline>();
     }
 
-    void OnMouseOver()
+    private void OnMouseOver()
     { 
-        Debug.Log("Mouse is over GameObject.");
-        outlineRef.OutlineColor = Color.Lerp(Color.clear, Color.white, Mathf.PingPong(Time.time, 1));
+        print ("Mouse is over GameObject.");
+        _outlineRef.OutlineColor = Color.Lerp(Color.clear, Color.white, Mathf.PingPong(Time.time, 1));
     }
 
-    void OnMouseExit()
+    private void OnMouseExit()
     {
-        Debug.Log("Mouse is no longer on GameObject.");
-        outlineRef.OutlineColor = Color.Lerp(outlineRef.OutlineColor, Color.clear, Mathf.PingPong(Time.time, 1));
-        outlineRef.OutlineColor = Color.clear;
+        print ("Mouse is no longer on GameObject.");
+        _outlineRef.OutlineColor = Color.Lerp(_outlineRef.OutlineColor, Color.clear, Mathf.PingPong(Time.time, 1));
+        _outlineRef.OutlineColor = Color.clear;
     }
 }

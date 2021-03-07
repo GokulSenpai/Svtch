@@ -11,59 +11,62 @@ public class Breath : MonoBehaviour
 {    
     [Space]
     public Volume postVolume;
-    private FPSCharacter player;
     
     [Space][Header("Breath Settings")]
-    public bool heldBreath = false;
-    public float maximumBreathHoldTime = 15f;
-    public float breathTimer = 0f;
-    public float breathWalkSpeed = 1f;
-    public float breathStrafeSpeed = 1f;
+    [SerializeField] private bool heldBreath;
+    [SerializeField] private float maximumBreathHoldTime = 15f;
+    [SerializeField] private float breathTimer;
+    [SerializeField] private float breathWalkSpeed = 1f;
+    [SerializeField] private float breathStrafeSpeed = 1f;
 
     [Space] [Header("Camera Shake Settings")]
-    public float shakeIncrement = 0.035f;
-    public float roughnessIncrement = 0.035f;
-
+    [SerializeField] private float shakeIncrement = 0.035f;
+    [SerializeField] private float roughnessIncrement = 0.035f;
 
     [Space] [Header("Breath Audio")] 
-    public AudioSource inhale;
-    public AudioSource heartBeat;
-    public AudioSource exhale;
+    [SerializeField] private AudioSource inhale;
+    [SerializeField] private AudioSource heartBeat;
+    [SerializeField] private AudioSource exhale;
 
     [Space] [Header("Post Effect Value Changes")]
-    public float vignetteIncrement = 0.1f;
-    public float contrastDecrement = 0.25f;
-    public float effectRecoilTime = 5f;
-
-    private float shakeMagnitude = 0f;
-    private float shakeRoughness = 0f;
+    [SerializeField] private float vignetteIncrement = 0.1f;
+    [SerializeField] private float contrastDecrement = 0.25f;
+    [SerializeField] private float effectRecoilTime = 5f;
     
-    private Vignette vignette;
-    private ColorAdjustments colorAdjustments;
+    private FPSCharacter _player;
 
-    private float playerSpeedBackup;
-    private float playerStrafeBackup;
+    private float _shakeMagnitude;
+    private float _shakeRoughness;
+    
+    private Vignette _vignette;
+    private ColorAdjustments _colorAdjustments;
 
-    private bool timeCompleted = false;
+    private float _playerSpeedBackup;
+    private float _playerStrafeBackup;
 
-    private AudioClip exhaleAudio;
+    private bool _timeCompleted;
 
-    private bool hasPlayedOnce = false;
+    private AudioClip _exhaleAudio;
+
+    private bool _hasPlayedOnce;
+
+    private void Awake()
+    {
+        _player = gameObject.GetComponent<FPSCharacter>();
+        
+        postVolume.profile.TryGet(out _vignette);
+        postVolume.profile.TryGet(out _colorAdjustments);
+    }
 
     private void Start()
     {
-        player = gameObject.GetComponent<FPSCharacter>();
+        _exhaleAudio = exhale.clip;
 
-        exhaleAudio = exhale.clip;
-
-        playerSpeedBackup = player.walkSpeed;
-        playerStrafeBackup = player.strafeSpeed;
-        
-        postVolume.profile.TryGet(out vignette);
-        postVolume.profile.TryGet(out colorAdjustments);
+        _playerSpeedBackup = _player.walkSpeed;
+        _playerStrafeBackup = _player.strafeSpeed;
     }
-    
-    void Update()
+
+    private void Update()
     {
         heldBreath = Input.GetKey(KeyCode.LeftAlt);
 
@@ -72,80 +75,84 @@ public class Breath : MonoBehaviour
             if (breathTimer < maximumBreathHoldTime)
             {
                 breathTimer += Time.deltaTime;
-                vignette.smoothness.value += vignetteIncrement * Time.deltaTime;
-                colorAdjustments.postExposure.value -= contrastDecrement * Time.deltaTime;
-                
-                // Will go to around 0.5 in 15 seconds
-                shakeMagnitude += shakeIncrement * Time.deltaTime;
-                shakeRoughness += roughnessIncrement * Time.deltaTime;
-                
-                CameraShaker.Instance.ShakeOnce(shakeMagnitude, shakeRoughness, 0.1f, 1f);
-                
-                player.walkSpeed = breathWalkSpeed;
-                player.strafeSpeed = breathStrafeSpeed;
+                IncrementEffectShakeSpeed();
 
-                timeCompleted = false;
+                _timeCompleted = false;
             }
             else
             {
                 heldBreath = false;
-                timeCompleted = true;
+                _timeCompleted = true;
                 
                 heartBeat.Stop();
 
-                if (!hasPlayedOnce)
+                if (!_hasPlayedOnce)
                 {
-                    exhale.PlayOneShot(exhaleAudio);
-                    hasPlayedOnce = true;
+                    exhale.PlayOneShot(_exhaleAudio);
+                    _hasPlayedOnce = true;
                 }
                 
-                vignette.smoothness.value = Mathf.Lerp(vignette.smoothness.value, 0f, Time.deltaTime * effectRecoilTime);
-                colorAdjustments.postExposure.value = Mathf.Lerp(colorAdjustments.postExposure.value, 0f, Time.deltaTime * effectRecoilTime);
-
-                shakeMagnitude = Mathf.Lerp(shakeMagnitude, 0f, Time.deltaTime * effectRecoilTime);
-                shakeRoughness = Mathf.Lerp(shakeRoughness, 0f, Time.deltaTime * effectRecoilTime);
-                
-                player.walkSpeed = playerSpeedBackup;
-                player.strafeSpeed = playerStrafeBackup;
-                
-                // Death state
+                BackToNormalEffectShakeSpeed();
             }
         }
         else
         {
-                vignette.smoothness.value = Mathf.Lerp(vignette.smoothness.value, 0f, Time.deltaTime * effectRecoilTime);
-                colorAdjustments.postExposure.value = Mathf.Lerp(colorAdjustments.postExposure.value, 0f, Time.deltaTime * effectRecoilTime);
-                
-                shakeMagnitude = Mathf.Lerp(shakeMagnitude, 0f, Time.deltaTime * effectRecoilTime);
-                shakeRoughness = Mathf.Lerp(shakeRoughness, 0f, Time.deltaTime * effectRecoilTime);
-                
-                player.walkSpeed = playerSpeedBackup;
-                player.strafeSpeed = playerStrafeBackup;
-                
-                breathTimer = 0f;
+            BackToNormalEffectShakeSpeed();
+            breathTimer = 0f;
         }
 
         if (Input.GetKeyDown(KeyCode.LeftAlt))
         {
             breathTimer = 0f;
             exhale.Stop();
-            StartCoroutine(nameof(StartHeartBeat));
+            StartCoroutine(nameof(StartHeartBeatCoroutine));
         }
-        
-        if (Input.GetKeyUp(KeyCode.LeftAlt) && !timeCompleted)
-        {
-            StopCoroutine(nameof(StartHeartBeat));
-            heartBeat.Stop();
-            exhale.Play();
-        }
+
+        if (!Input.GetKeyUp(KeyCode.LeftAlt) || _timeCompleted) return;
+        StopHeartBeatCoroutineAndExhale();
     }
 
-    private IEnumerator StartHeartBeat()
+    private void IncrementEffectShakeSpeed()
+    {
+        _vignette.smoothness.value += vignetteIncrement * Time.deltaTime;
+        _colorAdjustments.postExposure.value -= contrastDecrement * Time.deltaTime;
+
+        // Will go to around 0.5 in 15 seconds
+        _shakeMagnitude += shakeIncrement * Time.deltaTime;
+        _shakeRoughness += roughnessIncrement * Time.deltaTime;
+
+        CameraShaker.Instance.ShakeOnce(_shakeMagnitude, _shakeRoughness, 0.1f, 1f);
+
+        _player.walkSpeed = breathWalkSpeed;
+        _player.strafeSpeed = breathStrafeSpeed;
+    }
+
+    private void BackToNormalEffectShakeSpeed()
+    {
+        _vignette.smoothness.value = Mathf.Lerp(_vignette.smoothness.value, 0f, Time.deltaTime * effectRecoilTime);
+        _colorAdjustments.postExposure.value =
+            Mathf.Lerp(_colorAdjustments.postExposure.value, 0f, Time.deltaTime * effectRecoilTime);
+
+        _shakeMagnitude = Mathf.Lerp(_shakeMagnitude, 0f, Time.deltaTime * effectRecoilTime);
+        _shakeRoughness = Mathf.Lerp(_shakeRoughness, 0f, Time.deltaTime * effectRecoilTime);
+
+        _player.walkSpeed = _playerSpeedBackup;
+        _player.strafeSpeed = _playerStrafeBackup;
+    }
+
+    private IEnumerator StartHeartBeatCoroutine()
     {
         inhale.Play();
         yield return new WaitForSeconds(1f);
         heartBeat.Play();
         yield return new WaitForSeconds(14f);
         heartBeat.Stop();
+    }
+    
+    private void StopHeartBeatCoroutineAndExhale()
+    {
+        StopCoroutine(nameof(StartHeartBeatCoroutine));
+        heartBeat.Stop();
+        exhale.Play();
     }
 }

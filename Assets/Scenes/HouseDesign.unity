@@ -10066,6 +10066,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3203308908385241907, guid: 31f905f516a955842941992ab13da882,
         type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3203308908385241907, guid: 31f905f516a955842941992ab13da882,
+        type: 3}
       propertyPath: rayLength
       value: 2
       objectReference: {fileID: 0}
@@ -13479,6 +13484,8 @@ MonoBehaviour:
   breathTimer: 0
   breathWalkSpeed: 1
   breathStrafeSpeed: 1
+  shakeIncrement: 0.035
+  roughnessIncrement: 0.035
   inhale: {fileID: 1937213283}
   heartBeat: {fileID: 1759778468}
   exhale: {fileID: 29878972}
