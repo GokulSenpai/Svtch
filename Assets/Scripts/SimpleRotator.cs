@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SimpleRotator : MonoBehaviour
 {
-    public Vector2 rotationRange = new Vector2(70, 70);
-    public float rotationSpeed = 10f;
-
-    public float dampingTime = 0.2f;
+    [SerializeField] private Vector2 rotationRange = new Vector2(70, 70);
+    [SerializeField] private float rotationSpeed = 10f;
+    [SerializeField] private float dampingTime = 0.2f;
 
     // Final rotation for camera to ease in to
     private Vector3 _targetAngles;
@@ -17,7 +13,7 @@ public class SimpleRotator : MonoBehaviour
     private Vector3 _followAngles;
     
     private Vector3 _followVelocity;
-
+    
     private Quaternion _originalRotation;
 
     private float _horizontalInput;

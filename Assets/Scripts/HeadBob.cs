@@ -1,18 +1,28 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(AudioSource))]
 public class HeadBob : MonoBehaviour
 {
+    [Space]
     [SerializeField] private Transform head;
     
-    [SerializeField] private float headBobFrequency = 1.5f;
-    [SerializeField] private float headBobSwayAngle = 0.5f;
-    [SerializeField] private float headBobHeight = 0.3f;
-    [SerializeField] private float headBobSideMovement = 0.05f;
-    [SerializeField] private float headBobSpeedMultiplier = 0.3f;
-    [SerializeField] private float bobStrideSpeedLengthen = 0.3f;
+    [Space]
+    [SerializeField] private HeadBobSettings headBobSettings = new HeadBobSettings();
+
+    [Serializable]
+    public class HeadBobSettings
+    {
+        public float headBobFrequency = 1.5f;
+        public float headBobSwayAngle = 0.5f;
+        public float headBobHeight = 0.3f;
+        public float headBobSideMovement = 0.05f;
+        public float headBobSpeedMultiplier = 0.3f;
+        public float bobStrideSpeedLengthen = 0.3f;
+    }
     
+    [Space]
     [SerializeField] private AudioClip[] footStepSounds;
 
     private Vector3 _originalLocalPosition;
@@ -89,9 +99,9 @@ public class HeadBob : MonoBehaviour
 
         _flatVelocity = new Vector3(_velocity.x, 0f, _velocity.z).magnitude;
 
-        _strideLengthen = 1 + (_flatVelocity * bobStrideSpeedLengthen);
+        _strideLengthen = 1 + (_flatVelocity * headBobSettings.bobStrideSpeedLengthen);
 
-        _headBobCycle += _flatVelocity / _strideLengthen * (Time.deltaTime / headBobFrequency);
+        _headBobCycle += _flatVelocity / _strideLengthen * (Time.deltaTime / headBobSettings.headBobFrequency);
 
         _bobFactor = Mathf.Sin(_headBobCycle * Mathf.PI * 2);
         _bobSwayFactor = Mathf.Sin(Mathf.PI * (2 * _headBobCycle + 0.5f));
@@ -101,13 +111,13 @@ public class HeadBob : MonoBehaviour
         
         _headBobFade = Mathf.Lerp(_headBobFade, new Vector3(_velocity.x, 0f, _velocity.z).magnitude < 0.1f ? 0.0f : 1.0f, Time.deltaTime);
 
-        _speedHeightFactor = 1 + (_flatVelocity * headBobSpeedMultiplier);
+        _speedHeightFactor = 1 + (_flatVelocity * headBobSettings.headBobSpeedMultiplier);
 
-        _xPos = -headBobSideMovement * _bobSwayFactor;
-        _yPos = _springPosition + _bobFactor * headBobHeight * _headBobFade * _speedHeightFactor;
+        _xPos = -headBobSettings.headBobSideMovement * _bobSwayFactor;
+        _yPos = _springPosition + _bobFactor * headBobSettings.headBobHeight * _headBobFade * _speedHeightFactor;
 
         _xTilt = -_springPosition;
-        _zTilt = _bobSwayFactor * headBobSwayAngle * _headBobFade;
+        _zTilt = _bobSwayFactor * headBobSettings.headBobSwayAngle * _headBobFade;
 
         head.localPosition = _originalLocalPosition + new Vector3(_xPos, _yPos, 0);
         head.localRotation = Quaternion.Euler(_xTilt, 0.0f, _zTilt);

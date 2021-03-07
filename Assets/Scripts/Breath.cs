@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -12,10 +9,14 @@ public class Breath : MonoBehaviour
     [Space]
     public Volume postVolume;
     
-    [Space][Header("Breath Settings")]
+    [Space] [ShowOnly]
     [SerializeField] private bool heldBreath;
-    [SerializeField] private float maximumBreathHoldTime = 15f;
-    [SerializeField] private float breathTimer;
+    
+    [Space]
+    [ShowOnly] [SerializeField] private float breathTimer;
+    
+    [Space][Header("Breath Settings")]
+    [SerializeField] private float breathHoldTime = 15f;
     [SerializeField] private float breathWalkSpeed = 1f;
     [SerializeField] private float breathStrafeSpeed = 1f;
 
@@ -72,7 +73,7 @@ public class Breath : MonoBehaviour
 
         if (heldBreath)
         {
-            if (breathTimer < maximumBreathHoldTime)
+            if (breathTimer < breathHoldTime)
             {
                 breathTimer += Time.deltaTime;
                 IncrementEffectShakeSpeed();

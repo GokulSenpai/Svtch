@@ -2,7 +2,10 @@
 
 public class RaycastInteract : MonoBehaviour
 {
-    public Animator crossHairImage;
+    [Space]
+    [SerializeField] private Animator crossHairAnimator;
+    
+    [Space]
     [SerializeField] private int rayLength = 5;
 
     private IInteractable _interactable;
@@ -52,13 +55,13 @@ public class RaycastInteract : MonoBehaviour
         }
         else
         { 
-            crossHairImage.SetBool(Interacting, false);
+            crossHairAnimator.SetBool(Interacting, false);
         }
     }
 
     private void InteractingWithHitObject()
     {
-        crossHairImage.SetBool(Interacting, true);
+        crossHairAnimator.SetBool(Interacting, true);
         
         if (Input.GetMouseButtonDown(0))
         {

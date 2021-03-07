@@ -3,9 +3,11 @@ using UnityEngine;
 
 public class Pickup : MonoBehaviour, IInteractable
 {
-    public bool pickedMeUp;
+    [Space]
+    [ShowOnly] public bool pickedMeUp;
 
-    public AudioSource pickUpSound;
+    [Space]
+    [SerializeField] private AudioSource pickUpSound;
     
     public void Interact()
     {

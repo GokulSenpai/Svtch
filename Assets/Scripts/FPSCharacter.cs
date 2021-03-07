@@ -3,9 +3,12 @@ using UnityEngine;
 
 public class FPSCharacter : MonoBehaviour
 {
+    [Space]
+    [Header("Speed Settings")]
     public float strafeSpeed = 2f;
     public float walkSpeed = 2f;
     
+    [Space]
     [SerializeField] private AdvancedSettings advanced = new AdvancedSettings();
     
     private float _horizontalInput;
