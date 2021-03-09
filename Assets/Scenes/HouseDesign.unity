@@ -1821,6 +1821,11 @@ PrefabInstance:
       propertyPath: heartBeat
       value: 
       objectReference: {fileID: 1759778468}
+    - target: {fileID: 3203308906461545945, guid: 31f905f516a955842941992ab13da882,
+        type: 3}
+      propertyPath: head
+      value: 
+      objectReference: {fileID: 1747642967}
     - target: {fileID: 3203308906461545947, guid: 31f905f516a955842941992ab13da882,
         type: 3}
       propertyPath: m_RootOrder
@@ -1881,12 +1886,23 @@ PrefabInstance:
       propertyPath: m_Name
       value: FirstPerson
       objectReference: {fileID: 0}
+    - target: {fileID: 3203308906818893690, guid: 31f905f516a955842941992ab13da882,
+        type: 3}
+      propertyPath: m_Name
+      value: Camera Rig
+      objectReference: {fileID: 0}
     - target: {fileID: 3203308908385241907, guid: 31f905f516a955842941992ab13da882,
         type: 3}
       propertyPath: crossHairAnimator
       value: 
       objectReference: {fileID: 1409585963}
-    m_RemovedComponents: []
+    - target: {fileID: 8449689908887595096, guid: 31f905f516a955842941992ab13da882,
+        type: 3}
+      propertyPath: m_Name
+      value: Head
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 1149831983, guid: 31f905f516a955842941992ab13da882, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 31f905f516a955842941992ab13da882, type: 3}
 --- !u!1001 &203480424
 PrefabInstance:
@@ -7751,6 +7767,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bd7550284cfb884ea005444eb8efbbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &894342185 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3203308906818893690, guid: 31f905f516a955842941992ab13da882,
+    type: 3}
+  m_PrefabInstance: {fileID: 202594060}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &894342187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 894342185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ab8353b5ebd32545867da143199a814, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultPosInfluence: {x: 0.15, y: 0.15, z: 0.15}
+  defaultRotInfluence: {x: 1, y: 1, z: 1}
+  restPositionOffset: {x: 0, y: 0, z: 0}
+  restRotationOffset: {x: 0, y: 0, z: 0}
 --- !u!1001 &911586399
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15004,6 +15042,12 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4000011008206588, guid: 3a238d68bcb7e654f8f4c93e03241b83,
     type: 3}
   m_PrefabInstance: {fileID: 1744799138}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1747642967 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1915683540469185972, guid: 31f905f516a955842941992ab13da882,
+    type: 3}
+  m_PrefabInstance: {fileID: 202594060}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1755068080
 PrefabInstance:
