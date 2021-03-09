@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class Pickup : MonoBehaviour, IInteractable
+public class KeyPickUp : MonoBehaviour, IInteractable
 {
     [Space]
     [ShowOnly] public bool pickedMeUp;
@@ -10,6 +10,11 @@ public class Pickup : MonoBehaviour, IInteractable
     [SerializeField] private AudioSource pickUpSound;
     
     public void Interact()
+    {
+        PickUpKey();
+    }
+
+    private void PickUpKey()
     {
         pickedMeUp = true;
         StartCoroutine(PlayPickUpSoundAndDisableObjectCoroutine());

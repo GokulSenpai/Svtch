@@ -1,8 +1,8 @@
 ﻿using System.Collections;
+using EZCameraShake;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
-using EZCameraShake;
 
 public class Breath : MonoBehaviour
 {    
@@ -19,11 +19,11 @@ public class Breath : MonoBehaviour
     [SerializeField] private float breathHoldTime = 15f;
     [SerializeField] private float breathWalkSpeed = 1f;
     [SerializeField] private float breathStrafeSpeed = 1f;
-
+    
     [Space] [Header("Camera Shake Settings")]
     [SerializeField] private float shakeIncrement = 0.035f;
     [SerializeField] private float roughnessIncrement = 0.035f;
-
+    
     [Space] [Header("Breath Audio")] 
     [SerializeField] private AudioSource inhale;
     [SerializeField] private AudioSource heartBeat;
@@ -36,9 +36,6 @@ public class Breath : MonoBehaviour
     
     private FPSCharacter _player;
 
-    private float _shakeMagnitude;
-    private float _shakeRoughness;
-    
     private Vignette _vignette;
     private ColorAdjustments _colorAdjustments;
 
@@ -46,10 +43,11 @@ public class Breath : MonoBehaviour
     private float _playerStrafeBackup;
 
     private bool _timeCompleted;
-
-    private AudioClip _exhaleAudio;
-
+    
     private bool _hasPlayedOnce;
+    
+    private float _shakeMagnitude;
+    private float _shakeRoughness;
 
     private void Awake()
     {
@@ -61,8 +59,6 @@ public class Breath : MonoBehaviour
 
     private void Start()
     {
-        _exhaleAudio = exhale.clip;
-
         _playerSpeedBackup = _player.walkSpeed;
         _playerStrafeBackup = _player.strafeSpeed;
     }
@@ -89,7 +85,7 @@ public class Breath : MonoBehaviour
 
                 if (!_hasPlayedOnce)
                 {
-                    exhale.PlayOneShot(_exhaleAudio);
+                    StopHeartBeatCoroutineAndExhale();
                     _hasPlayedOnce = true;
                 }
                 
@@ -99,6 +95,7 @@ public class Breath : MonoBehaviour
         else
         {
             BackToNormalEffectShakeSpeed();
+            _hasPlayedOnce = false;
             breathTimer = 0f;
         }
 
@@ -117,13 +114,13 @@ public class Breath : MonoBehaviour
     {
         _vignette.smoothness.value += vignetteIncrement * Time.deltaTime;
         _colorAdjustments.postExposure.value -= contrastDecrement * Time.deltaTime;
-
+        
         // Will go to around 0.5 in 15 seconds
         _shakeMagnitude += shakeIncrement * Time.deltaTime;
         _shakeRoughness += roughnessIncrement * Time.deltaTime;
 
         CameraShaker.Instance.ShakeOnce(_shakeMagnitude, _shakeRoughness, 0.1f, 1f);
-
+        
         _player.walkSpeed = breathWalkSpeed;
         _player.strafeSpeed = breathStrafeSpeed;
     }
@@ -133,7 +130,7 @@ public class Breath : MonoBehaviour
         _vignette.smoothness.value = Mathf.Lerp(_vignette.smoothness.value, 0f, Time.deltaTime * effectRecoilTime);
         _colorAdjustments.postExposure.value =
             Mathf.Lerp(_colorAdjustments.postExposure.value, 0f, Time.deltaTime * effectRecoilTime);
-
+        
         _shakeMagnitude = Mathf.Lerp(_shakeMagnitude, 0f, Time.deltaTime * effectRecoilTime);
         _shakeRoughness = Mathf.Lerp(_shakeRoughness, 0f, Time.deltaTime * effectRecoilTime);
 
