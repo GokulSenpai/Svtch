@@ -5,7 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/HouseDesign.unity
     guid: 2c6ea2566e0d106428f51d0b66611389
+  - enabled: 1
+    path: Assets/HQ_ResidentialHouse/DemoScene/DemoScene_BakedSetup_Night.unity
+    guid: 8d4c3f79223584b4e88a7e21194e18eb
   m_configObjects: {}
